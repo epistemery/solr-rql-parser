@@ -6,7 +6,7 @@
 
     <groupId>org.epistemery.solr.plugins</groupId>
     <artifactId>solr-rql-parser</artifactId>
-    <version>1.0.0</version>
+    <version>0.0.2</version>
 
     <name>${project.groupId}:${project.artifactId}</name>
     <description>RQL parser plugin for solr, implemented in JavaScript</description>
