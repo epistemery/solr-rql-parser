@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema name="test-schema" version="1.5">
+  <uniqueKey>id</uniqueKey>
+  <fieldType name="binary" class="solr.BinaryField"/>
+  <fieldType name="boolean" class="solr.BoolField" sortMissingLast="true"/>
+  <fieldType name="date" class="solr.TrieDateField" positionIncrementGap="0" precisionStep="0"/>
+  <fieldType name="double" class="solr.TrieDoubleField" positionIncrementGap="0" precisionStep="0"/>
+  <fieldType name="string" class="solr.StrField" sortMissingLast="true"/>
+  <fieldType name="text" class="solr.TextField" sortMissingLast="true">
+      <analyzer>
+        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+      </analyzer>
+  </fieldType>
+  <fieldType name="number" class="solr.TrieLongField" positionIncrementGap="0" precisionStep="0"/>
+  <field name="id" type="string" multiValued="false" indexed="true" required="true" stored="true"/>
+  <field name="uri" type="string" indexed="true" stored="true" />
+  <field name="number" type="number" indexed="true" stored="true"/>
+  <field name="bool" type="boolean" indexed="true" stored="true"/>
+  <field name="text" type="text" indexed="true" stored="true" />
+  <field name="same" type="string" indexed="true" stored="true" />
+  <field name="keywords" type="string" indexed="true" stored="true" multiValued="true" />
+</schema>
+

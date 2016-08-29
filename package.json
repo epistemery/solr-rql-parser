@@ -1,0 +1,10 @@
+{
+  "name": "solr-rql-parser",
+  "version": "0.0.1",
+  "description": "",
+  "dependencies": {
+    "rql": "^0.3.3",
+    "solr-js-queryparser": "github:epistemery/solr-js-queryparser#github"
+  },
+  "main": "solr-rql-parser.js"
+}
