@@ -39,10 +39,6 @@ function LiteralString(str) {
     };
 }
 
-rql_parser.converters["literal"] = function (str) {
-    return new LiteralString(str);
-};
-
 function value_to_bytesref(key, value) {
     value = String(value);
     var field = this.schema.getFieldTypeNoEx(key);
@@ -116,6 +112,12 @@ function parse() {
 function RqlSolrParser(qparser) {
     this.qparser = qparser;
     this.ops.parser = this;
+
+    for(var p in this.converters) {
+        if(this.converters.hasOwnProperty(p)) {
+            rql_parser.converters[p] = this.converters[p];
+        }
+    }
 
     this.value_to_bytesref = value_to_bytesref;
     this.assemble_term_query = assemble_term_query;
@@ -343,6 +345,12 @@ RqlSolrParser.prototype.ops = {
 // solr query for multivalued fields is the same as for single valued fields
 RqlSolrParser.prototype.ops.contains = RqlSolrParser.prototype.ops["eq"];
 RqlSolrParser.prototype.ops.excludes = RqlSolrParser.prototype.ops["ne"];
+
+RqlSolrParser.prototype.converters = {
+    "literal": function (str) {
+        return new LiteralString(str);
+    }
+};
 
 
 module.exports = RqlSolrParser;
