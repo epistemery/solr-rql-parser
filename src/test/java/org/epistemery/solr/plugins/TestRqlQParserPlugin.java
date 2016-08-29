@@ -137,6 +137,11 @@ public class TestRqlQParserPlugin extends SolrTestCaseJ4 {
     }
 
     @Test
+    public void testConvertMask() throws Exception {
+        assertJQ(req("defType", "javascript", "q", "eq(text,mask:lore*)"), "/response/numFound==2");
+    }
+
+    @Test
     public void testBooleanCombinations() throws Exception {
         clearIndex();
 

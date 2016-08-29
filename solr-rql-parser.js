@@ -13,6 +13,15 @@ var Term = Java.type("org.apache.lucene.index.Term");
 var QueryParsing = Java.type("org.apache.solr.search.QueryParsing");
 var BytesRefBuilder = Java.type("org.apache.lucene.util.BytesRefBuilder");
 var QueryBuilder = Java.type("org.apache.lucene.util.QueryBuilder");
+var RqlQueryParserBase = Java.extend(Java.type("org.apache.solr.parser.SolrQueryParserBase"), {
+    ReInit: function(stream) {
+
+    },
+    TopLevelQuery: function(field) {
+        return null;
+    }
+});
+
 var ModifiableSolrParams = Java.type("org.apache.solr.common.params.ModifiableSolrParams");
 
 // debug function because Query instance is not JSON-serializable
@@ -40,6 +49,12 @@ function LiteralString(str) {
     };
 }
 
+function WildcardString(str) {
+    this.toString = function() {
+        return decodeURIComponent(str);
+    };
+}
+
 function value_to_bytesref(key, value) {
     value = String(value);
     var field = this.schema.getFieldTypeNoEx(key);
@@ -57,16 +72,17 @@ function value_to_bytesref(key, value) {
 function assemble_term_query(key, value, scope) {
     var field = this.getfield(key, scope);
 
-    var builder = new QueryBuilder(this.schema.getQueryAnalyzer());
-
     // in case we need this some day (minShouldMatchQuery):
     //return builder.createMinShouldMatchQuery("body", "another test", 0.5f);
 
     if (value instanceof LiteralString) {
-        return builder.createPhraseQuery(field, this.walk(value));
+        return this.querybuilder.createPhraseQuery(field, this.walk(value));
+    }
+    if (value instanceof WildcardString) {
+        return this.parserbase.getWildcardQuery(field, this.walk(value));
     }
 
-    return builder.createBooleanQuery(field, this.walk(value));
+    return this.querybuilder.createBooleanQuery(field, this.walk(value));
 }
 
 function forEachArg(args, func) {
@@ -84,8 +100,6 @@ function walk(query, scope) {
 }
 
 function parse() {
-    this.schema = this.qparser.getReq().getSchema();
-
     var parsed_rql = rql_parser.parse(this.qparser.getQstr());
     //console.log("parsed RQL: " + JSON.stringify(parsed_rql.toObject(), null, 2));
 
@@ -122,6 +136,11 @@ function RqlSolrParser(qparser) {
     this.forEachArg = forEachArg;
     this.walk = walk;
     this.parse = parse;
+
+    this.schema = this.qparser.getReq().getSchema();
+    this.querybuilder = new QueryBuilder(this.schema.getQueryAnalyzer());
+    this.parserbase = new RqlQueryParserBase();
+    this.parserbase.init(null, null, this.qparser);
 }
 
 RqlSolrParser.prototype.getfield = function(key, scope) {
@@ -347,6 +366,9 @@ RqlSolrParser.prototype.ops.excludes = RqlSolrParser.prototype.ops["ne"];
 RqlSolrParser.prototype.converters = {
     "literal": function (str) {
         return new LiteralString(str);
+    },
+    "mask": function (str) {
+        return new WildcardString(str);
     }
 };
 
