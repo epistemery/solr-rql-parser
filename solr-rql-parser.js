@@ -12,6 +12,7 @@ var SolrRangeQuery = Java.type("org.apache.solr.query.SolrRangeQuery");
 var Term = Java.type("org.apache.lucene.index.Term");
 var QueryParsing = Java.type("org.apache.solr.search.QueryParsing");
 var BytesRefBuilder = Java.type("org.apache.lucene.util.BytesRefBuilder");
+var QueryBuilder = Java.type("org.apache.lucene.util.QueryBuilder");
 var ModifiableSolrParams = Java.type("org.apache.solr.common.params.ModifiableSolrParams");
 
 // debug function because Query instance is not JSON-serializable
@@ -54,21 +55,18 @@ function value_to_bytesref(key, value) {
 }
 
 function assemble_term_query(key, value, scope) {
-    var self = this;
     var field = this.getfield(key, scope);
 
+    var builder = new QueryBuilder(this.schema.getQueryAnalyzer());
+
+    // in case we need this some day (minShouldMatchQuery):
+    //return builder.createMinShouldMatchQuery("body", "another test", 0.5f);
+
     if (value instanceof LiteralString) {
-        var terms = value.str.split("%20");
-        var builder = new PhraseQuery.Builder();
-
-        terms.forEach(function(term){
-            builder.add(new Term(field, self.walk(self.value_to_bytesref(key, term))));
-        });
-
-        return builder.build();
+        return builder.createPhraseQuery(field, this.walk(value));
     }
 
-    return new TermQuery(new Term(field, this.value_to_bytesref(key, this.walk(value))));
+    return builder.createBooleanQuery(field, this.walk(value));
 }
 
 function forEachArg(args, func) {
