@@ -99,7 +99,7 @@ function walk(query, scope) {
         return this.ops[query.name](query.args, scope);
     }
 
-    return query;
+    return this.getvalue(query, scope);
 }
 
 function parse() {
@@ -148,6 +148,10 @@ function RqlSolrParser(qparser) {
 
 RqlSolrParser.prototype.getfield = function(key, scope) {
     return key;
+};
+
+RqlSolrParser.prototype.getvalue = function(val, scope) {
+    return val;
 };
 
 RqlSolrParser.prototype.ops = {
