@@ -189,7 +189,7 @@ RqlSolrParser.prototype.ops = {
         parser.forEachArg(args, function (arg) {
             var subq = parser.walk(arg, scope);
             if(subq) {
-                builder.add(parser.walk(arg, scope), BooleanClause.Occur.SHOULD);
+                builder.add(subq, BooleanClause.Occur.SHOULD);
             }
         });
 
@@ -204,10 +204,7 @@ RqlSolrParser.prototype.ops = {
         var builder = new BooleanQuery.Builder();
 
         parser.forEachArg(args, function (arg) {
-            var subq = parser.walk(arg, scope);
-            if(subq) {
-                builder.add(self["eq"]([key, arg], scope), BooleanClause.Occur.SHOULD);
-            }
+            builder.add(self["eq"]([key, arg], scope), BooleanClause.Occur.SHOULD);
         });
 
         var query = builder.build();
@@ -221,10 +218,7 @@ RqlSolrParser.prototype.ops = {
 
         builder.add(new MatchAllDocsQuery(), BooleanClause.Occur.MUST);
         parser.forEachArg(args, function (arg) {
-            var subq = parser.walk(arg, scope);
-            if(subq) {
-                builder.add(parser.assemble_term_query(key, arg, scope), BooleanClause.Occur.MUST_NOT);
-            }
+            builder.add(parser.assemble_term_query(key, arg, scope), BooleanClause.Occur.MUST_NOT);
         });
 
         var query = builder.build();
@@ -327,7 +321,7 @@ RqlSolrParser.prototype.ops = {
         parser.forEachArg(args, function (arg) {
             var subq = parser.walk(arg, scope);
             if(subq) {
-                builder.add(parser.walk(arg, scope), BooleanClause.Occur.FILTER);
+                builder.add(subq, BooleanClause.Occur.FILTER);
             }
         });
 
@@ -337,7 +331,7 @@ RqlSolrParser.prototype.ops = {
     },
     "boost": function(args, scope) {
         var boost = args.shift();
-        var query = new BoostQuery(this.parser.walk(args[0], scope), boost).getQuery();
+        var query = new BoostQuery(this.parser.walk(args[0], scope), parseFloat(boost));
 
         return query;
     },
