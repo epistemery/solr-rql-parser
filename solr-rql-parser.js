@@ -93,6 +93,9 @@ function forEachArg(args, func) {
 
 function walk(query, scope) {
     if (query instanceof rql_parser.Query) {
+        if(!this.ops[query.name]) {
+            throw new Error("'" + query.name + "' is not a valid query function");
+        }
         return this.ops[query.name](query.args, scope);
     }
 
