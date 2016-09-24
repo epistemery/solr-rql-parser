@@ -139,6 +139,7 @@ function RqlSolrParser(qparser) {
     this.forEachArg = forEachArg;
     this.walk = walk;
     this.parse = parse;
+    this.rql_parser = rql_parser;
 
     this.schema = this.qparser.getReq().getSchema();
     this.querybuilder = new QueryBuilder(this.schema.getQueryAnalyzer());
