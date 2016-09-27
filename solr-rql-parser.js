@@ -112,7 +112,7 @@ function parse() {
     var newParams = new ModifiableSolrParams(this.qparser.getParams());
 
     if(this.sort !== undefined) {
-        newParams.add("sort", this.sort.join(","));
+        newParams.set("sort", [this.sort.join(",")]);
     }
     if(this.rows !== undefined && this.start !== undefined) {
         newParams.set("rows", parseInt(this.rows));
@@ -292,13 +292,14 @@ RqlSolrParser.prototype.ops = {
             if(parser.sort === undefined) {
                 parser.sort = [];
             }
+            var arg = parser.getfield(arg, scope);
             var dir = arg.slice(0,1);
             if(dir === "+") {
                 parser.sort.push(arg.slice(1) + " asc");
             } else if(dir === "-") {
                 parser.sort.push(arg.slice(1) + " desc");
             } else {
-                parser.sort.push(arg + " desc");
+                parser.sort.push(arg + " asc");
             }
         });
     },
