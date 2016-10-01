@@ -195,19 +195,19 @@ public class TestRqlQParserPlugin extends SolrTestCaseJ4 {
                 "/response/docs/[0]/id=='1'",
                 "/response/docs/[1]/id=='4'",
                 "/response/docs/[2]/id=='8'",
-                "/response/docs/[3]/id=='6'",
-                "/response/docs/[4]/id=='5'",
+                "/response/docs/[3]/id=='5'",
+                "/response/docs/[4]/id=='6'",
                 "/response/docs/[5]/id=='2'",
                 "/response/docs/[6]/id=='7'",
                 "/response/docs/[7]/id=='3'");
 
         assertJQ(
                 req("defType", "javascript", "sort", "bool asc, same asc", "q", "and(all(),sort(+same,-bool))"),
-                "/response/docs/[0]/id=='8'",
-                "/response/docs/[1]/id=='5'",
-                "/response/docs/[2]/id=='1'",
-                "/response/docs/[3]/id=='4'",
-                "/response/docs/[4]/id=='6'",
+                "/response/docs/[0]/id=='1'",
+                "/response/docs/[1]/id=='4'",
+                "/response/docs/[2]/id=='8'",
+                "/response/docs/[3]/id=='6'",
+                "/response/docs/[4]/id=='5'",
                 "/response/docs/[5]/id=='2'",
                 "/response/docs/[6]/id=='7'",
                 "/response/docs/[7]/id=='3'");
