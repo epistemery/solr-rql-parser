@@ -309,6 +309,22 @@ RqlSolrParser.prototype.ops = {
     },
 
     // non-standard RQL operators
+    "regexp": function(args, scope) {
+        var key = args[0];
+        var regexp = args[1];
+
+        var query = this.parser.parserbase.getRegexpQuery(this.parser.getfield(key, scope), regexp);
+
+        return query;
+    },
+    "prefix": function(args, scope) {
+        var key = args[0];
+        var prefix = args[1];
+
+        var query = this.parser.parserbase.getPrefixQuery(this.parser.getfield(key, scope), prefix);
+
+        return query;
+    },
     "all": function(args, scope) {
         var query = new MatchAllDocsQuery();
 

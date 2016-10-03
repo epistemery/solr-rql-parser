@@ -101,6 +101,20 @@ public class TestRqlQParserPlugin extends SolrTestCaseJ4 {
     }
 
     @Test
+    public void testRegExp() throws Exception {
+        assertJQ(req("defType", "javascript", "q", "regexp(uri,ab.*)"), "/response/numFound==2");
+        assertJQ(req("defType", "javascript", "q", "regexp(uri,ab..+)"), "/response/numFound==1");
+        assertJQ(req("defType", "javascript", "q", "regexp(uri,abcde)"), "/response/numFound==0");
+    }
+
+    @Test
+    public void testPrefix() throws Exception {
+        assertJQ(req("defType", "javascript", "q", "prefix(uri,ab)"), "/response/numFound==2");
+        assertJQ(req("defType", "javascript", "q", "prefix(uri,abc)"), "/response/numFound==1");
+        assertJQ(req("defType", "javascript", "q", "prefix(uri,abcd)"), "/response/numFound==0");
+    }
+
+    @Test
     public void testIs() throws Exception {
         assertJQ(req("defType", "javascript", "q", "is(42)"), "/response/numFound==1");
         assertJQ(req("defType", "javascript", "q", "is(44)"), "/response/numFound==0");
@@ -223,7 +237,7 @@ public class TestRqlQParserPlugin extends SolrTestCaseJ4 {
     public static void index() throws Exception {
         assertU(adoc(
                 "id", "42",
-                "uri", "urn:42",
+                "uri", "abc",
                 "same", "same",
                 "text", "lorem ipsum",
                 "number", "1886",
@@ -232,7 +246,7 @@ public class TestRqlQParserPlugin extends SolrTestCaseJ4 {
                 "keywords", "def"));
         assertU(adoc(
                 "id", "43",
-                "uri", "urn:43",
+                "uri", "abd abcd",
                 "same", "same",
                 "text", "lorem",
                 "number", "1887",
